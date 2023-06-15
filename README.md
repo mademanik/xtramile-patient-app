@@ -2,7 +2,7 @@
 
 ### Overview
 
-1. Create new patient
+1. Create new patient, open url : http://localhost:8081/patient
 ![create](https://i.postimg.cc/K8PwQ74r/create.png)
 ![create_done](https://i.postimg.cc/ydbbWvrB/create-done.png)
 
