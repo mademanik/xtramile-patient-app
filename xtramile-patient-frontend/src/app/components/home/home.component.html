@@ -1,0 +1,58 @@
+<mat-toolbar>
+  <button
+    class="sidebar-toggle"
+    type="button"
+    aria-label="Toggle sidebar"
+    mat-icon-button
+    (click)="sidenavToggle()"
+  >
+    <div *ngIf="this.isMobile">
+      <mat-icon *ngIf="!sidenav.opened">menu</mat-icon>
+      <mat-icon *ngIf="sidenav.opened">close</mat-icon>
+    </div>
+
+    <div *ngIf="!this.isMobile">
+      <mat-icon>menu</mat-icon>
+    </div>
+  </button>
+
+  <app-profile></app-profile>
+</mat-toolbar>
+
+<mat-sidenav-container id="sidenav">
+  <mat-sidenav mode="side" #sidenav>
+    <img
+      class="avatar mat-elevation-z8"
+      src="../../../assets/avatar/avatar.jpeg"
+    />
+
+    <h4 class="name">Made Manik</h4>
+    <p class="designation">Hospital Admin</p>
+
+    <mat-divider></mat-divider>
+    <a
+      mat-button
+      class="menu-button"
+      [ngClass]="activeMenu === 'dashboard' ? 'active' : ''"
+      routerLink="/dashboard"
+      (click)="setMenuActive('dashboard')"
+    >
+      <mat-icon> local_hospital</mat-icon>
+      <span class="btn-text">Dashboard</span>
+    </a>
+    <a
+      mat-button
+      class="menu-button"
+      [ngClass]="activeMenu === 'patient' ? 'active' : ''"
+      routerLink="/patient"
+      (click)="setMenuActive('patient')"
+    >
+      <mat-icon> hotel</mat-icon>
+      <span class="btn-text">Patient</span>
+    </a>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <div class="content mat-elevation-z4"><router-outlet></router-outlet></div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

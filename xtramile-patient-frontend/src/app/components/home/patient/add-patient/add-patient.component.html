@@ -1,0 +1,92 @@
+<form [formGroup]="patientForm" (ngSubmit)="submit()">
+  <h2 mat-dialog-title>Add Patient</h2>
+  <mat-dialog-content class="mat-typography">
+    <mat-form-field class="form-first" appearance="outline">
+      <mat-label>First Name</mat-label>
+      <input
+        matInput
+        formControlName="firstName"
+        placeholder="Patient First Name"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Last Name</mat-label>
+      <input
+        matInput
+        formControlName="lastName"
+        placeholder="Patient Last Name"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Date of Birth</mat-label>
+      <input
+        matInput
+        readonly
+        [matDatepicker]="picker"
+        formControlName="dateOfBirth"
+        placeholder="dd-mm-yyyy"
+      />
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Gender</mat-label>
+      <mat-select formControlName="gender">
+        <mat-option *ngFor="let gender of genders" [value]="gender.value">
+          {{ gender.viewValue }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Address</mat-label>
+      <input matInput formControlName="address" placeholder="Patient address" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Suburb</mat-label>
+      <input matInput formControlName="suburb" placeholder="Patient suburb" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>State</mat-label>
+      <input matInput formControlName="state" placeholder="Patient state" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Postcode</mat-label>
+      <input
+        matInput
+        formControlName="postcode"
+        placeholder="Patient Postcode"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Phone Number</mat-label>
+      <input
+        matInput
+        formControlName="phoneNumber"
+        placeholder="Patient Phone Number"
+      />
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button color="accent" mat-dialog-close>Cancel</button>
+    <button
+      mat-button
+      color="primary"
+      [mat-dialog-close]="true"
+      cdkFocusInitial
+      type="submit"
+    >
+      Submit
+    </button>
+  </mat-dialog-actions>
+</form>

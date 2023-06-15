@@ -1,0 +1,98 @@
+<h2 mat-dialog-title>Show Product</h2>
+<mat-dialog-content class="mat-typography" *ngIf="row">
+  <mat-form-field class="form-first" appearance="outline">
+    <mat-label>Pid</mat-label>
+    <input
+      matInput
+      placeholder="Pid"
+      value="{{ row.pid }}"
+      readonly
+    />
+  </mat-form-field>
+
+  <mat-form-field class="form-first" appearance="outline">
+    <mat-label>First Name</mat-label>
+    <input
+      matInput
+      placeholder="Patient First Name"
+      value="{{ row.firstName }}"
+      readonly
+    />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Last Name</mat-label>
+    <input
+      matInput
+      placeholder="Patient Last Name"
+      value="{{ row.lastName }}"
+      readonly
+    />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Date of Birth</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      value="{{ row.dateOfBirth }}"
+      readonly
+    />
+    <mat-hint>YYYY-MM-DD</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Gender</mat-label>
+    <input
+      matInput
+      placeholder="Patient Gender"
+      value="{{ row.gender }}"
+      readonly
+    />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Address</mat-label>
+    <input
+      matInput
+      placeholder="Patient Address"
+      value="{{ row.address }}"
+      readonly
+    />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Suburb</mat-label>
+    <input
+      matInput
+      placeholder="Patient Suburb"
+      value="{{ row.suburb }}"
+      readonly
+    />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>State</mat-label>
+    <input
+      matInput
+      placeholder="Patient State"
+      value="{{ row.state }}"
+      readonly
+    />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Phone Number</mat-label>
+    <input
+      matInput
+      placeholder="Patient Phone Number"
+      value="{{ row.phoneNumber }}"
+      readonly
+    />
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button color="accent" mat-dialog-close>Close</button>
+</mat-dialog-actions>
