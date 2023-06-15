@@ -6,6 +6,8 @@ import com.xtramile.patient.backend.model.Patient;
 import com.xtramile.patient.backend.repository.PatientRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -95,6 +97,27 @@ public class PatientServiceImpl implements PatientService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Page<Patient> getAllPatientsPagination(Pageable paging) {
+        Page<Patient> pagePatient = patientRepository.findAllPatientPagination(paging);
+        log.info("getAllPatientPagination successfully retrieved");
+        return pagePatient;
+    }
+
+    @Override
+    public Page<Patient> getAllPatientsByPidPagination(Long pid, Pageable paging) {
+        Page<Patient> pagePatient = patientRepository.findByPidPagination(pid, paging);
+        log.info("getAllPatientsByPidPagination successfully retrieved");
+        return pagePatient;
+    }
+
+    @Override
+    public Page<Patient> getAllPatientsByNamePagination(String name, Pageable paging) {
+        Page<Patient> pagePatient = patientRepository.findByNamePagination(name, paging);
+        log.info("getAllPatientsByNamePagination successfully retrieved");
+        return pagePatient;
     }
 
     private PatientResponse mapToPatientResponse(Patient patient) {

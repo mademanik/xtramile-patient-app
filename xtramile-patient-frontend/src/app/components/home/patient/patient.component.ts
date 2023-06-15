@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -33,6 +33,15 @@ export class PatientComponent implements AfterViewInit, OnInit {
   dataSource = new MatTableDataSource<Patient>();
   ELEMENT_DATA = [];
 
+  searchEvent: any = {
+    name: 'init',
+    value: 'init',
+  };
+  totalRows = 0;
+  pageSize = 3;
+  currentPage = 0;
+  pageSizeOptions: number[] = [3, 5, 10, 25, 100];
+
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
 
@@ -50,32 +59,88 @@ export class PatientComponent implements AfterViewInit, OnInit {
 
   applyFilterName(event: Event) {
     const filterValueName = (event.target as HTMLInputElement).value;
-    console.log(filterValueName);
-
-    this.patientService.findPatientByName(filterValueName).subscribe({
-      next: (res) => {
-        this.dataSource.data = res;
-      },
-      error: (err) => {
-        alert(err);
-      },
-    });
+    this.searchEvent = {
+      name: 'findByName',
+      value: filterValueName,
+    };
+    this.loadData();
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.patientService.findPatientByPid(filterValue).subscribe({
-      next: (res) => {
-        this.dataSource.data = res;
-      },
-      error: (err) => {
-        alert(err);
-      },
-    });
+    this.searchEvent = {
+      name: 'findByPid',
+      value: filterValue,
+    };
+    this.loadData();
   }
 
   ngOnInit(): void {
-    this.getPatients();
+    // this.getPatients();
+    this.loadData();
+  }
+
+  loadData() {
+    if (this.searchEvent.name === 'findByPid') {
+      this.patientService
+        .findPatientByPidPagination(
+          this.searchEvent.value,
+          this.currentPage,
+          this.pageSize
+        )
+        .subscribe({
+          next: (res) => {
+            this.dataSource.data = res.patients;
+            setTimeout(() => {
+              this.paginator.pageIndex = this.currentPage;
+              this.paginator.length = res.totalItems;
+            });
+          },
+          error: (err) => {
+            alert(err);
+          },
+        });
+    } else if (this.searchEvent.name === 'findByName') {
+      this.patientService
+        .findPatientByNamePagination(
+          this.searchEvent.value,
+          this.currentPage,
+          this.pageSize
+        )
+        .subscribe({
+          next: (res) => {
+            this.dataSource.data = res.patients;
+            setTimeout(() => {
+              this.paginator.pageIndex = this.currentPage;
+              this.paginator.length = res.totalItems;
+            });
+          },
+          error: (err) => {
+            alert(err);
+          },
+        });
+    } else {
+      this.patientService
+        .findPatientPagination(this.currentPage, this.pageSize)
+        .subscribe({
+          next: (res) => {
+            this.dataSource.data = res.patients;
+            setTimeout(() => {
+              this.paginator.pageIndex = this.currentPage;
+              this.paginator.length = res.totalItems;
+            });
+          },
+          error: (err) => {
+            alert(err);
+          },
+        });
+    }
+  }
+
+  pageChanged(event: PageEvent) {
+    this.pageSize = event.pageSize;
+    this.currentPage = event.pageIndex;
+    this.loadData();
   }
 
   getPatients() {
@@ -95,7 +160,10 @@ export class PatientComponent implements AfterViewInit, OnInit {
       position: { top: '20px' },
     });
     dialogRef.afterClosed().subscribe((result) => {
-      this.getPatients();
+      setTimeout(() => {
+        this.getPatients();
+      }, 500);
+
       if (result?.message == 'success') {
         this.openSnackbarSuccess('Success', 'Product successfully created');
       } else if (result?.message == 'error') {

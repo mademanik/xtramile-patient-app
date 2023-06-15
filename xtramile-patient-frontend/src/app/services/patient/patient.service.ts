@@ -38,4 +38,26 @@ export class PatientService {
   findPatientByPid(pid: any): Observable<Patient[]> {
     return this._httpClient.get<Patient[]>(`${this.baseUrl}?pid=${pid}`);
   }
+
+  findPatientPagination(page: any, size: any): Observable<any> {
+    return this._httpClient.get<any>(
+      `${this.baseUrl}/page?page=${page}&size=${size}`
+    );
+  }
+
+  findPatientByNamePagination(
+    name: any,
+    page: any,
+    size: any
+  ): Observable<any> {
+    return this._httpClient.get<any>(
+      `${this.baseUrl}/page?page=${page}&size=${size}&name=${name}`
+    );
+  }
+
+  findPatientByPidPagination(pid: any, page: any, size: any): Observable<any> {
+    return this._httpClient.get<any>(
+      `${this.baseUrl}/page?page=${page}&size=${size}&pid=${pid}`
+    );
+  }
 }

@@ -25,12 +25,12 @@
         <mat-card-content>
           <h3 class="card-title">Patient List</h3>
           <mat-form-field>
-            <mat-label>Search By PID...</mat-label>
+            <mat-label>Search By PID Number...</mat-label>
             <input
               type="number"
               matInput
               (keyup)="applyFilter($event)"
-              placeholder="Ex. 20"
+              placeholder="Ex. 12"
               #input
             />
           </mat-form-field>
@@ -39,7 +39,7 @@
             <input
               matInput
               (keyup)="applyFilterName($event)"
-              placeholder="Ex. Robert"
+              placeholder="Ex. Robertus"
               #input
             />
           </mat-form-field>
@@ -146,9 +146,13 @@
             </table>
 
             <mat-paginator
-              [pageSizeOptions]="[5, 10, 20]"
-              showFirstLastButtons
-              aria-label="Select page of periodic elements"
+              #paginator
+              [length]="totalRows"
+              [pageIndex]="currentPage"
+              [pageSize]="pageSize"
+              [pageSizeOptions]="pageSizeOptions"
+              (page)="pageChanged($event)"
+              aria-label="Select page"
             >
             </mat-paginator>
           </div>

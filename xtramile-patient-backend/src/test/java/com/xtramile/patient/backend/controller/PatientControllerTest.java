@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xtramile.patient.backend.dto.PatientRequest;
 import com.xtramile.patient.backend.dto.PatientResponse;
 import com.xtramile.patient.backend.model.Patient;
+import com.xtramile.patient.backend.repository.PatientRepository;
 import com.xtramile.patient.backend.service.PatientServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +32,9 @@ class PatientControllerTest {
 
     @MockBean
     private PatientServiceImpl patientService;
+
+    @MockBean
+    private PatientRepository patientRepository;
 
     @Autowired
     private ObjectMapper objectMapper;

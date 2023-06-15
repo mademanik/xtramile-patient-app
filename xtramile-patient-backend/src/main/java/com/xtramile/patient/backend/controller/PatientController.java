@@ -2,22 +2,28 @@ package com.xtramile.patient.backend.controller;
 
 import com.xtramile.patient.backend.dto.PatientRequest;
 import com.xtramile.patient.backend.dto.PatientResponse;
+import com.xtramile.patient.backend.model.Patient;
+import com.xtramile.patient.backend.repository.PatientRepository;
 import com.xtramile.patient.backend.service.PatientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/patient/api")
 @Slf4j
 public class PatientController {
+    @Autowired
+    private PatientRepository patientRepository;
+
     @Autowired
     private PatientService patientService;
 
@@ -59,6 +65,48 @@ public class PatientController {
         }
     }
 
+    @GetMapping("/page")
+    public ResponseEntity<Map<String, Object>> getAllPatientsPagination(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size,
+            @RequestParam(required = false) String name, Long pid) {
+        try {
+            List<Patient> patients = new ArrayList<Patient>();
+            Pageable paging = PageRequest.of(page, size);
+
+            if (name != null) {
+                Page<Patient> pagePats = patientService.getAllPatientsByNamePagination(name, paging);
+                patients = pagePats.getContent();
+
+                Map<String, Object> response = new HashMap<>();
+                response = mapPatientPagination(patients, pagePats);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+
+            if (pid != null) {
+                Page<Patient> pagePats = patientService.getAllPatientsByPidPagination(pid, paging);
+                patients = pagePats.getContent();
+
+                Map<String, Object> response = new HashMap<>();
+                response = mapPatientPagination(patients, pagePats);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+
+            if (name == null && pid == null) {
+                Page<Patient> pagePats = patientService.getAllPatientsPagination(paging);
+                patients = pagePats.getContent();
+
+                Map<String, Object> response = new HashMap<>();
+                response = mapPatientPagination(patients, pagePats);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(null, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/{pid}")
     public ResponseEntity<Optional<PatientResponse>> getPatientById(@PathVariable("pid") Long pid) {
         try {
@@ -87,5 +135,17 @@ public class PatientController {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public Map<String, Object> mapPatientPagination(List<Patient> patients, Page<Patient> pagePats) {
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("patients", patients);
+        response.put("currentPage", pagePats.getNumber());
+        response.put("totalItems", pagePats.getTotalElements());
+        response.put("totalPages", pagePats.getTotalPages());
+
+        return response;
+
     }
 }
