@@ -46,6 +46,11 @@
    npm -v
    8.19.4
    ```
+4. Check JDK version
+   ```
+   java -version
+   java version "17.0.6" 2023-01-17 LTS
+   ```
 
 ### Installation Steps
 
