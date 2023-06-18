@@ -13,13 +13,19 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Date;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -78,6 +84,76 @@ class PatientControllerTest {
 
         patientRequest = mapToPatientRequest(patient);
         patientRequest2 = mapToPatientRequest(patient);
+    }
+
+    @Test
+    @DisplayName("Test for getAllPatientsPagination controller service")
+    void getAllPatientsPagination() throws Exception {
+
+        // given - precondition or setup
+        Pageable pageable = PageRequest.of(0, 3);
+
+        // when -  action or the behaviour that we are going test
+        Page<Patient> patients = new PageImpl<>(List.of(patient, patient2), pageable, 2);
+        when(patientService.getAllPatientsPagination(pageable)).thenReturn(patients);
+
+        // then - verify the result or output
+        mockMvc.perform(get("/patient/api/page").param("page", "0")
+                        .param("size", "3"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.totalItems", is(2)))
+                .andExpect(jsonPath("$.totalPages", is(1)))
+                .andExpect(jsonPath("$.currentPage", is(0)))
+                .andExpect(jsonPath("$.patients[0].firstName", is("Kadek Kanaya")))
+                .andExpect(jsonPath("$.patients[1].firstName", is("Iluh Iliana")))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Test for getAllPatientsPaginationByPid controller service")
+    void getAllPatientsPaginationByPid() throws Exception {
+
+        // given - precondition or setup
+        Pageable pageable = PageRequest.of(0, 3);
+
+        // when -  action or the behaviour that we are going test
+        Page<Patient> patients = new PageImpl<>(Collections.singletonList(patient), pageable, 1);
+        when(patientService.getAllPatientsByPidPagination(1L, pageable)).thenReturn(patients);
+
+        // then - verify the result or output
+        mockMvc.perform(get("/patient/api/page").param("page", "0")
+                        .param("size", "3").param("pid", "1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.totalItems", is(1)))
+                .andExpect(jsonPath("$.totalPages", is(1)))
+                .andExpect(jsonPath("$.currentPage", is(0)))
+                .andExpect(jsonPath("$.patients[0].firstName", is("Kadek Kanaya")))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Test for getAllPatientsPaginationByName controller service")
+    void getAllPatientsPaginationByName() throws Exception {
+
+        // given - precondition or setup
+        Pageable pageable = PageRequest.of(0, 3);
+
+        // when -  action or the behaviour that we are going test
+        Page<Patient> patients = new PageImpl<>(Collections.singletonList(patient), pageable, 1);
+        when(patientService.getAllPatientsByNamePagination("kadek", pageable)).thenReturn(patients);
+
+        // then - verify the result or output
+        mockMvc.perform(get("/patient/api/page").param("page", "0")
+                        .param("size", "3").param("name", "kadek"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.totalItems", is(1)))
+                .andExpect(jsonPath("$.totalPages", is(1)))
+                .andExpect(jsonPath("$.currentPage", is(0)))
+                .andExpect(jsonPath("$.patients[0].firstName", is("Kadek Kanaya")))
+                .andDo(print());
     }
 
     @Test

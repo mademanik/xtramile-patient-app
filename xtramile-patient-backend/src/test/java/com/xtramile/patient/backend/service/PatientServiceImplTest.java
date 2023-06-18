@@ -13,12 +13,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.util.Assert;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.willDoNothing;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +41,10 @@ class PatientServiceImplTest {
     private PatientServiceImpl patientService;
 
     Patient patient = new Patient();
+
+    Patient patient1 = new Patient();
+
+    Patient patient2 = new Patient();
 
     List<Patient> patientList = new ArrayList<>();
 
@@ -53,7 +63,6 @@ class PatientServiceImplTest {
                 .phoneNumber("083834595231")
                 .build();
 
-        Patient patient1 = new Patient();
         patient1 = Patient.builder()
                 .pid(1L)
                 .firstName("Made Manik")
@@ -67,7 +76,6 @@ class PatientServiceImplTest {
                 .phoneNumber("083834595232")
                 .build();
 
-        Patient patient2 = new Patient();
         patient2 = Patient.builder()
                 .pid(1L)
                 .firstName("Iluh Ishita")
@@ -83,6 +91,63 @@ class PatientServiceImplTest {
 
         patientList.add(patient1);
         patientList.add(patient2);
+    }
+
+    @Test
+    @DisplayName("Test for getAllPatientsPagination methods service")
+    void getAllPatientsPagination() {
+        // given - precondition or setup
+        Pageable pageable = PageRequest.of(0, 3);
+
+        // when -  action or the behaviour that we are going test
+        Page<Patient> patients = new PageImpl<>(List.of(patient, patient2), pageable, 2);
+        when(patientRepository.findAllPatientPagination(pageable)).thenReturn(patients);
+
+        // Call the service method
+        Page<Patient> resultPage = patientService.getAllPatientsPagination(pageable);
+
+        // then - verify the output
+        org.junit.jupiter.api.Assertions.assertEquals(2, resultPage.getTotalElements());
+        org.junit.jupiter.api.Assertions.assertEquals("Made Maharani", resultPage.getContent().get(0).getFirstName());
+        org.junit.jupiter.api.Assertions.assertEquals("Iluh Ishita", resultPage.getContent().get(1).getFirstName());
+    }
+
+    @Test
+    @DisplayName("Test for getAllPatientsByPidPagination methods service")
+    void getAllPatientsByPidPagination() {
+        // given - precondition or setup
+        Pageable pageable = PageRequest.of(0, 3);
+
+        // when -  action or the behaviour that we are going test
+        Page<Patient> patients = new PageImpl<>(List.of(patient, patient2), pageable, 2);
+        when(patientRepository.findByPidPagination(1L, pageable)).thenReturn(patients);
+
+        // Call the service method
+        Page<Patient> resultPage = patientService.getAllPatientsByPidPagination(1L, pageable);
+
+        // then - verify the output
+        org.junit.jupiter.api.Assertions.assertEquals(2, resultPage.getTotalElements());
+        org.junit.jupiter.api.Assertions.assertEquals("Made Maharani", resultPage.getContent().get(0).getFirstName());
+        org.junit.jupiter.api.Assertions.assertEquals("Iluh Ishita", resultPage.getContent().get(1).getFirstName());
+    }
+
+    @Test
+    @DisplayName("Test for getAllPatientsByNamePagination methods service")
+    void getAllPatientsByNamePagination() {
+        // given - precondition or setup
+        Pageable pageable = PageRequest.of(0, 3);
+
+        // when -  action or the behaviour that we are going test
+        Page<Patient> patients = new PageImpl<>(List.of(patient, patient2), pageable, 2);
+        when(patientRepository.findByNamePagination("made", pageable)).thenReturn(patients);
+
+        // Call the service method
+        Page<Patient> resultPage = patientService.getAllPatientsByNamePagination("made", pageable);
+
+        // then - verify the output
+        org.junit.jupiter.api.Assertions.assertEquals(2, resultPage.getTotalElements());
+        org.junit.jupiter.api.Assertions.assertEquals("Made Maharani", resultPage.getContent().get(0).getFirstName());
+        org.junit.jupiter.api.Assertions.assertEquals("Iluh Ishita", resultPage.getContent().get(1).getFirstName());
     }
 
     @Test
@@ -184,4 +249,5 @@ class PatientServiceImplTest {
         // then - verify the output
         Assertions.assertThat(updatePatient).isNotNull();
     }
+
 }
